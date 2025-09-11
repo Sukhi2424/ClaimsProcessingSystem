@@ -80,6 +80,21 @@ body {
         font-weight: 600;
     }
 
+
+/* --- Navbar Logo Styling --- */
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Adds space between the logo and text */
+    font-weight: 600;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+    .navbar-brand img {
+        height: 30px; /* Controls the size of the logo */
+    }
+
 /* 3. Refined Table Styling */
 .table-sleek {
     border-collapse: separate;
