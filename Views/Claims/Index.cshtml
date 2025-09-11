@@ -24,7 +24,7 @@
         </div>
     </form>
 
-    <div class="table-container">
+    <div class="table-responsive">
         <table class="table table-hover table-sleek align-middle">
             <thead>
                 <tr>
@@ -59,7 +59,7 @@
                         <td>
                             @if (!string.IsNullOrEmpty(item.SupportingDocumentPath))
                             {
-                                <a href="@item.SupportingDocumentPath" target="_blank" class="btn btn-outline-secondary btn-sm">View</a>
+                                <a href="@item.SupportingDocumentPath" target="_blank" class="view-document-link">View</a>
                             }
                             else
                             {
@@ -67,10 +67,16 @@
                             }
                         </td>
                         <td class="text-end">
-                            <div class="btn-group gap-2" role="group">
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary btn-sm">Edit</a>
-                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Details</a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                            <div class="dropdown actions-dropdown">
+                                <button class="btn btn-kebab" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">Edit</a></li>
+                                    <li><a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id">Details</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a></li>
+                                </ul>
                             </div>
                         </td>
                     </tr>

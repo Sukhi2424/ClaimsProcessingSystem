@@ -7,29 +7,37 @@
 @if (Model != null)
 {
     // This part shows for LOGGED-IN EMPLOYEES
-    <div class="dashboard-header">
-        <h1>Welcome back, @Model.FullName!</h1>
-        <p class="text-muted">Here is a summary of your claims activity.</p>
-    </div>
+    <div class="dashboard-center-container">
+        <div class="dashboard-header text-center">
+            <h1>Welcome back, @Model.FullName!</h1>
+            <p class="text-muted">Here is a summary of your claims activity.</p>
+        </div>
 
-    <div class="stats-container">
-        <div class="stat-card">
-            <div class="card-icon"><i class="fas fa-file-signature"></i></div>
-            <p class="card-label">Your Pending Claims</p>
-            <p class="stat-number">@Model.PendingClaimsCount</p>
-            <a asp-controller="Claims" asp-action="Index" class="card-button">View My Claims</a>
-        </div>
-        <div class="stat-card">
-            <div class="card-icon"><i class="fas fa-plus-circle"></i></div>
-            <p class="card-label">Submit a New Claim</p>
-            <p class="stat-number">Start</p>
-            <a asp-controller="Claims" asp-action="Create" class="card-button">Create New</a>
-        </div>
-        <div class="stat-card">
-            <div class="card-icon"><i class="fas fa-user-circle"></i></div>
-            <p class="card-label">Manage Your Profile</p>
-            <p class="stat-number">Edit</p>
-            <a asp-area="Identity" asp-page="/Account/Manage/Index" class="card-button">View Profile</a>
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="card-icon">
+                    <i class="fas fa-file-signature"></i>
+                </div>
+                <p class="card-label">Your Pending Claims</p>
+                <p class="stat-number">@Model.PendingClaimsCount</p>
+                <a asp-controller="Claims" asp-action="Index" class="card-button">View My Claims</a>
+            </div>
+            <div class="stat-card">
+                <div class="card-icon">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <p class="card-label">Submit a New Claim</p>
+                <p class="stat-number">Start</p>
+                <a asp-controller="Claims" asp-action="Create" class="card-button">Create New</a>
+            </div>
+            <div class="stat-card">
+                <div class="card-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <p class="card-label">Manage Your Profile</p>
+                <p class="stat-number">Edit</p>
+                <a asp-area="Identity" asp-page="/Account/Manage/Index" class="card-button">View Profile</a>
+            </div>
         </div>
     </div>
 }
