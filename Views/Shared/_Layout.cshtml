@@ -1,7 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@using ClaimsProcessingSystem.Models.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+
+<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-g" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - WCPS</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -16,6 +20,10 @@
                     <img src="~/images/logo.png" alt="WCPS Logo" />
                     <span>WCPS</span>
                 </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         @{
@@ -24,29 +32,51 @@
                         <li class="nav-item">
                             <a class="nav-link @(currentController == "Home" ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        @if (User.Identity.IsAuthenticated && User.IsInRole("Manager"))
+
+                        @if (SignInManager.IsSignedIn(User))
                         {
+                            @if (User.IsInRole("Manager"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link @(currentController == "Admin" ? "active" : "")" asp-area="" asp-controller="Admin" asp-action="Index">Admin Claims</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(currentController == "Users" ? "active" : "")" asp-area="" asp-controller="Users" asp-action="Index">Manage Users</a>
+                                </li>
+                            }
                             <li class="nav-item">
-                                <a class="nav-link @(currentController == "Admin" ? "active" : "")" asp-area="" asp-controller="Admin" asp-action="Index">Admin Claims</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link @(currentController == "Users" ? "active" : "")" asp-area="" asp-controller="Users" asp-action="Index">Manage Users</a>
+                                <a class="nav-link @(currentController == "Claims" ? "active" : "")" asp-area="" asp-controller="Claims" asp-action="Index">My Claims</a>
                             </li>
                         }
-                        <li class="nav-item">
-                            <a class="nav-link @(currentController == "Claims" ? "active" : "")" asp-area="" asp-controller="Claims" asp-action="Index">My Claims</a>
-                        </li>
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+
+    @{
+        // This logic checks if we are on the homepage AND the user is logged out.
+        var isHomePage = ViewContext.RouteData.Values["controller"]?.ToString() == "Home" &&
+        ViewContext.RouteData.Values["action"]?.ToString() == "Index";
+        var userIsLoggedIn = SignInManager.IsSignedIn(User);
+    }
+
+    @if (isHomePage && !userIsLoggedIn)
+    {
+        // If it's the logged-out homepage, render without a container to allow the hero section to be full-width.
+        @RenderBody()
+    }
+    else
+    {
+        // For all other pages, use the standard container to keep the content neat.
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    }
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>

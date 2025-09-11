@@ -531,3 +531,100 @@ body {
     .view-document-link:hover {
         text-decoration: underline;
     }
+
+
+/* === Hero Section / Landing Page Styles === */
+
+.hero-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    min-height: calc(100vh - 80px); /* Adjust 80px to match your navbar height */
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); /* Subtle light gradient */
+}
+
+[data-theme="dark"] .hero-section {
+    background: var(--bg-color);
+}
+
+.hero-content {
+    max-width: 550px;
+    text-align: left;
+}
+
+    .hero-content h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        color: var(--text-color);
+    }
+
+    .hero-content p {
+        font-size: 1.1rem;
+        color: var(--text-muted-color);
+        margin: 1.5rem 0;
+    }
+
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.hero-visual {
+    max-width: 500px;
+    margin-left: 4rem;
+}
+
+@media (max-width: 992px) {
+    .hero-section {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .hero-visual {
+        margin-left: 0;
+        margin-top: 3rem;
+    }
+
+    .hero-actions {
+        justify-content: center;
+    }
+}
+
+/* === Hero Section / Landing Page Styles === */
+.hero-section {
+    padding: 4rem 0;
+    background-color: var(--bg-color); /* Uses your theme's background */
+}
+
+[data-theme="dark"] .hero-section {
+    background-color: transparent; /* In dark mode, blend with body */
+}
+
+.hero-content h1 {
+    font-size: 3.2rem;
+    font-weight: 700;
+    border-bottom: none; /* Remove the underline from the h1 */
+    padding-bottom: 0;
+}
+
+.hero-content .lead {
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin: 1.5rem 0;
+}
+
+[data-theme="dark"] .hero-content .lead {
+    color: var(--text-muted-color);
+}
+
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.hero-visual svg {
+    width: 100%;
+    height: auto;
+}
