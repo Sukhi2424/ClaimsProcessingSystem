@@ -1,0 +1,111 @@
+﻿@model ClaimsProcessingSystem.Helpers.PaginatedList<ClaimsProcessingSystem.Models.Claim>
+
+@{
+    ViewData["Title"] = "All Claims";
+}
+
+<div class="content-card">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="mb-0"><i class="fas fa-file-alt"></i> All Claims</h1>
+        <span class="badge-status badge-status-pending">@ViewBag.PendingCount Pending</span>
+    </div>
+
+    <form asp-action="Index" method="get" class="my-4 filter-form">
+        <div class="form-group">
+            <label for="statusFilter" class="form-label visually-hidden">Filter by Status:</label>
+            @Html.DropDownList("statusFilter",
+            new SelectList(Enum.GetValues(typeof(ClaimsProcessingSystem.Models.ClaimStatus))),
+                        "All",
+                        new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Filter" class="btn btn-primary" />
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-sleek align-middle">
+            <thead>
+                <tr>
+                    <th>Submitted By</th>
+                    <th>Title</th>
+                    <th>Requested Amount</th>
+                    <th>Approved Amount</th>
+                    <th>Date Submitted</th>
+                    <th>Status</th>
+                    <th>Document</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.SubmittingUser.FullName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                        <td>@item.RequestedAmount.ToString("C")</td>
+                        <td>@(item.ApprovedAmount?.ToString("C") ?? "N/A")</td>
+                        <td>@item.DateSubmitted.ToShortDateString()</td>
+                        <td>
+                            @{
+                                string badgeClass = item.Status switch
+                                {
+                                    ClaimStatus.Approved => "badge-status-approved",
+                                    ClaimStatus.Rejected => "badge-status-rejected",
+                                    _ => "badge-status-pending"
+                                };
+                            }
+                            <span class="badge-status @badgeClass">@item.Status</span>
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.SupportingDocumentPath))
+                            {
+                                <a href="@item.SupportingDocumentPath" target="_blank" class="btn btn-outline-secondary btn-sm">View</a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">N/A</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            @if (item.Status == ClaimStatus.Pending)
+                            {
+                                <div class="btn-group gap-2">
+                                    <form asp-action="ApproveClaim" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                        <button type="submit" class="btn-action btn-action-approve"><i class="fas fa-check"></i> Approve</button>
+                                    </form>
+                                    <form asp-action="RejectClaim" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                        <button type="submit" class="btn-action btn-action-reject"><i class="fas fa-times"></i> Reject</button>
+                                    </form>
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="badge-status badge-status-processed">Processed</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <div class="pagination-container">
+            @{
+                var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)" asp-route-statusFilter="@ViewData["CurrentFilter"]" class="@prevDisabled">&laquo; Prev</a>
+
+                for (var i = 1; i <= Model.TotalPages; i++)
+                {
+                    var activeClass = (i == Model.PageIndex) ? "active-page" : "";
+                    <a asp-action="Index" asp-route-pageNumber="@i" asp-route-statusFilter="@ViewData["CurrentFilter"]" class="@activeClass">@i</a>
+                }
+
+                var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+                <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)" asp-route-statusFilter="@ViewData["CurrentFilter"]" class="@nextDisabled">Next &raquo;</a>
+            }
+        </div>
+    }
+</div>

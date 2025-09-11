@@ -1,0 +1,56 @@
+﻿@model IEnumerable<ClaimsProcessingSystem.Models.Audit>
+
+<div class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationDropdown">
+    <h6 class="dropdown-header">Recent Activity</h6>
+    @if (Model.Any())
+    {
+        @foreach (var notification in Model)
+{
+    // Check if the PrimaryKey exists before creating a link
+    @if (!string.IsNullOrEmpty(notification.PrimaryKey))
+    {
+        var pkId = System.Text.Json.JsonDocument.Parse(notification.PrimaryKey).RootElement.GetProperty("Id").ToString();
+
+        <a class="dropdown-item"
+           asp-controller="@(notification.TableName == "Claims" ? "Claims" : "Users")"
+           asp-action="@(notification.TableName == "Claims" ? "Details" : "Edit")"
+           asp-route-id="@pkId">
+            <div class="fw-bold">
+                @if (notification.TableName == "Claims")
+                {
+                    <i class="fas fa-file-invoice-dollar text-primary"></i> <span>New Claim Added</span>
+                }
+                else if (notification.TableName == "AspNetUsers")
+                {
+                    <i class="fas fa-user-plus text-success"></i> <span>New User Registered</span>
+                }
+            </div>
+            <div class="small text-muted">@notification.Timestamp.ToLocalTime().ToString("g")</div>
+        </a>
+    }
+    else
+    {
+        // Fallback for old notifications without a PrimaryKey
+        <a class="dropdown-item" href="#">
+            <div class="fw-bold">
+                 @if (notification.TableName == "Claims")
+                {
+                    <i class="fas fa-file-invoice-dollar text-primary"></i> <span>New Claim Added</span>
+                }
+                else if (notification.TableName == "AspNetUsers")
+                {
+                    <i class="fas fa-user-plus text-success"></i> <span>New User Registered</span>
+                }
+            </div>
+            <div class="small text-muted">@notification.Timestamp.ToLocalTime().ToString("g")</div>
+        </a>
+    }
+}
+    }
+    else
+    {
+        <div class="dropdown-item text-muted">No new notifications.</div>
+    }
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item text-center small text-muted" asp-controller="Admin" asp-action="AllActivity">View all activity</a>
+</div>

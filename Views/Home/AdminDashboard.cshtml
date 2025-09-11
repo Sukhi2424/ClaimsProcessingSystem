@@ -1,0 +1,18 @@
+﻿@model ClaimsProcessingSystem.Controllers.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="dashboard-header mb-4">
+    <h1>Admin Dashboard</h1>
+    <p class="text-muted">Welcome back, Admin! Here's your system-wide activity overview.</p>
+</div>
+
+<div class="stats-container mb-4">
+    @* --- Stat Cards from previous step --- *@
+</div>
+
+<div class="recent-activity-card">
+    <h4 class="mb-3">Recent Activity</h4>
+    @await Component.InvokeAsync("Notification")
+</div>

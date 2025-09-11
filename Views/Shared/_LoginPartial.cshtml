@@ -1,0 +1,43 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ClaimsProcessingSystem.Models.Identity
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<ul class="navbar-nav align-items-center">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        @if (User.IsInRole("Manager"))
+        {
+            <li class="nav-item dropdown">
+                <a class="nav-link" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-bell"></i>
+                </a>
+                @await Component.InvokeAsync("Notification")
+            </li>
+        }
+        <li class="nav-item">
+            @{
+                var currentUser = await UserManager.GetUserAsync(User);
+            }
+            <a class="nav-link d-flex align-items-center" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+                <partial name="_ProfilePicture" model="currentUser" />
+                <span class="ms-2">@currentUser?.FullName</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                <button type="submit" class="nav-link btn btn-link">Logout</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </li>
+    }
+</ul>

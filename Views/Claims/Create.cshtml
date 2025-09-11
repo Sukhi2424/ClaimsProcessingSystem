@@ -1,0 +1,58 @@
+﻿@model ClaimsProcessingSystem.Models.Claim
+
+@{
+    ViewData["Title"] = "Create a New Claim";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Submit New Claim Request</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label"></label>
+                        <input asp-for="Title" class="form-control" placeholder="e.g., Doctor Visit - Dr. Smith" />
+                        <div class="form-text">Please provide a brief, clear title for your claim.</div>
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="3" placeholder="e.g., Annual check-up, prescribed medicines, and blood test."></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="RequestedAmount" class="form-label"></label>
+                        <div class="input-group">
+                            <span class="input-group-text">₹</span>
+                            <input asp-for="RequestedAmount" class="form-control" placeholder="2500.00" />
+                        </div>
+                        <span asp-validation-for="RequestedAmount" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Supporting Document (Optional)</label>
+                        <input type="file" name="supportingDocument" class="form-control" />
+                        <div class="form-text">Upload a receipt or invoice if available (PDF, PNG, JPG).</div>
+                    </div>
+
+                    <div class="mt-4">
+                        <input type="submit" value="Submit Claim" class="btn btn-primary" />
+                        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,21 @@
+﻿@using ClaimsProcessingSystem.Models.Identity
+@model ApplicationUser
+
+@if (Model != null)
+{
+    @if (!string.IsNullOrEmpty(Model.ProfilePicturePath))
+    {
+        <img src="@Model.ProfilePicturePath" class="rounded-circle" style="width:40px; height:40px; object-fit: cover;" />
+    }
+    else
+    {
+        var nameParts = Model.FullName?.Split(' ');
+        var initials = nameParts?.Length > 1
+            ? $"{nameParts[0][0]}{nameParts[nameParts.Length - 1][0]}"
+            : (Model.FullName?.Length > 0 ? $"{Model.FullName[0]}" : "?");
+
+        <div class="profile-initials" title="@Model.FullName">
+            @initials.ToUpper()
+        </div>
+    }
+}
