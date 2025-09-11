@@ -227,3 +227,171 @@ body {
 .table .btn {
     border-radius: 6px;
 }
+
+
+/* === Polished Admin Dashboard Styles === */
+
+/* 1. Main Dashboard Layout */
+.dashboard-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+    .dashboard-header h1 {
+        font-weight: 700; /* Bolder title */
+        color: #1f2937;
+    }
+
+    .dashboard-header p {
+        color: #6b7280; /* Softer gray subtitle */
+    }
+
+[data-theme="dark"] .dashboard-header h1 {
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .dashboard-header p {
+    color: var(--text-muted-color);
+}
+
+.dashboard-center-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* This centers the content vertically */
+    align-items: center; /* This centers the content horizontally */
+    min-height: 75vh; /* Ensures the container has enough height to center within */
+}
+
+/* 2. Statistic Cards */
+.stats-container {
+    display: flex;
+    justify-content: center; /* Aligns items to the center */
+    gap: 2rem;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.stat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 280px;
+    padding: 1.5rem;
+    background-color: var(--surface-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    .stat-card .card-icon {
+        font-size: 2.5rem;
+        color: var(--primary-blue);
+    }
+
+    .stat-card .card-label {
+        color: #6b7280;
+        font-size: 0.9rem;
+        margin-top: 1rem;
+        text-transform: uppercase;
+    }
+
+    .stat-card .stat-number {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0.5rem 0;
+    }
+
+    /* Update for Stat Card Buttons */
+    .stat-card .card-button {
+        background-color: #e0edff; /* Very light blue background */
+        color: var(--primary-blue); /* Primary blue text */
+        border: 1px solid var(--primary-blue); /* Blue border */
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500; /* Slightly less bold */
+        text-decoration: none;
+        display: block;
+        width: 100%;
+        transition: all 0.2s ease; /* Smooth transition for all properties */
+    }
+
+        .stat-card .card-button:hover {
+            background: var(--gradient); /* Full gradient on hover */
+            color: white; /* White text on hover */
+            border-color: transparent; /* Remove border on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+/* Dark mode adjustment for the light button */
+[data-theme="dark"] .stat-card .card-button {
+    background-color: rgba(37, 99, 235, 0.2); /* Translucent blue in dark mode */
+    color: var(--primary-blue); /* Keep blue text */
+    border-color: var(--primary-blue); /* Keep blue border */
+}
+
+    [data-theme="dark"] .stat-card .card-button:hover {
+        background: var(--gradient);
+        color: white;
+        border-color: transparent;
+    }
+
+[data-theme="dark"] .stat-card {
+    border-color: var(--border-color);
+}
+
+    [data-theme="dark"] .stat-card .stat-number {
+        color: var(--text-color);
+    }
+
+    [data-theme="dark"] .stat-card .card-label {
+        color: var(--text-muted-color);
+    }
+
+
+/* 3. Recent Activity Card */
+.recent-activity-card {
+    margin-top: 3rem;
+    background-color: var(--surface-color);
+    border-radius: var(--border-radius-main);
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+    .activity-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+.activity-icon {
+    font-size: 1.25rem;
+}
+
+.activity-text .event {
+    font-weight: 500;
+}
+
+.activity-text .timestamp {
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+[data-theme="dark"] .activity-text .timestamp {
+    color: var(--text-muted-color);
+}
