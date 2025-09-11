@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using SendGrid.Helpers.Mail;
 using System.Security.Claims;
 using ClaimsProcessingSystem.Data;
+using ClaimsProcessingSystem.Helpers;
 
 namespace ClaimsProcessingSystem.Controllers
 {
@@ -22,10 +23,12 @@ namespace ClaimsProcessingSystem.Controllers
         }
 
         // GET: Users
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pageNumber = 1)
         {
-            var users = await _userManager.Users.ToListAsync();
-            return View(users);
+            int pageSize = 10;
+            var usersQuery = _userManager.Users.OrderBy(u => u.FullName);
+            var paginatedUsers = await PaginatedList<ApplicationUser>.CreateAsync(usersQuery, pageNumber, pageSize);
+            return View(paginatedUsers);
         }
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(string id)

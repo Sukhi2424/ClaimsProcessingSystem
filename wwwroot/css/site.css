@@ -92,8 +92,8 @@ body {
         text-overflow: ellipsis;
     }
 
-    .table-sleek thead {
-        background: linear-gradient(90deg, #1e3a8a 0%, #2563eb 100%); /* Dark Navy to Blue */
+    .table-sleek thead, .table thead {
+        background: var(--gradient); /* Use the main theme gradient */
         color: white;
     }
 /* Light mode specific table styles */
@@ -222,4 +222,8 @@ body {
     pointer-events: none;
     opacity: 0.5;
 
+}
+/* --- Button Polish --- */
+.table .btn {
+    border-radius: 6px;
 }

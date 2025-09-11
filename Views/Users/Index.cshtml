@@ -1,5 +1,5 @@
 ﻿@using ClaimsProcessingSystem.Models.Identity
-@model IEnumerable<ApplicationUser>
+@model ClaimsProcessingSystem.Helpers.PaginatedList<ClaimsProcessingSystem.Models.Identity.ApplicationUser>
 
 @{
     ViewData["Title"] = "User Management";
@@ -9,7 +9,7 @@
     <h1 class="mb-4"><i class="fas fa-users-cog"></i> User Management</h1>
 
     <div class="table-container">
-        <table class="table table-hover table-striped align-middle">
+        <table class="table table-hover align-middle">
             <thead>
                 <tr>
                     <th>Profile</th>
@@ -41,3 +41,21 @@
         </table>
     </div>
 </div>
+@if (Model.TotalPages > 1)
+{
+    <div class="pagination-container">
+        @{
+            var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+            <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)" class="@prevDisabled">&laquo; Prev</a>
+
+            for (var i = 1; i <= Model.TotalPages; i++)
+            {
+                var activeClass = (i == Model.PageIndex) ? "active-page" : "";
+                <a asp-action="Index" asp-route-pageNumber="@i" class="@activeClass">@i</a>
+            }
+
+            var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+            <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)" class="@nextDisabled">Next &raquo;</a>
+        }
+    </div>
+}
