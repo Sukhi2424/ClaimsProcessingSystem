@@ -60,9 +60,14 @@ body {
     box-shadow: 0 2px 4px rgba(0,0,0,.1);
 }
 
-    .navbar-brand, .navbar .nav-link, .navbar .fas {
+    .navbar-brand, .navbar .nav-link {
         color: white !important;
     }
+
+        /* This rule now ONLY targets the icons directly in the main navbar links (like the moon/bell) */
+        .navbar .nav-link > .fas {
+            color: white !important;
+        }
 
 .navbar-nav .nav-link {
     padding: 0.75rem 1rem;
@@ -395,3 +400,76 @@ body {
 [data-theme="dark"] .activity-text .timestamp {
     color: var(--text-muted-color);
 }
+
+/* --- 5. UI WIDGETS (Profile Pic, Notifications) --- */
+.profile-initials {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--gradient);
+    color: white;
+    text-align: center;
+    line-height: 40px;
+    font-weight: 500;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.navbar .nav-item.dropdown {
+    position: relative;
+}
+
+/* NEW Notification Dropdown Styles */
+.notification-dropdown {
+    width: 350px;
+    padding: 0;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 25px rgba(0,0,0,.1);
+    border-radius: var(--border-radius-main);
+}
+
+    .notification-dropdown .dropdown-header {
+        font-weight: 600;
+        padding: 1rem;
+        background-color: var(--surface-color);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .notification-dropdown .dropdown-item {
+        white-space: normal;
+        padding: 1rem;
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+.notification-icon {
+    font-size: 1.25rem;
+    color: var(--primary-blue);
+}
+
+.notification-content .notification-title {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.notification-content .notification-time {
+    font-size: 0.8rem;
+    color: var(--text-muted-color);
+}
+
+.notification-footer a {
+    display: block;
+    padding: 0.75rem;
+    text-align: center;
+    font-weight: 500;
+    background-color: var(--bg-color);
+    border-top: 1px solid var(--border-color);
+    text-decoration: none;
+}
+
+[data-theme="dark"] .notification-footer a {
+    color: var(--primary-blue);
+}
+
+
