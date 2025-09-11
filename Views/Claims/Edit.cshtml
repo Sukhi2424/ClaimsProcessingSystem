@@ -4,63 +4,64 @@
     ViewData["Title"] = "Edit Claim";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0">Edit Claim</h4>
-            </div>
-            <div class="card-body">
-                <form asp-action="Edit" enctype="multipart/form-data">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <input type="hidden" asp-for="Id" />
-                    <input type="hidden" asp-for="SubmittingUserId" />
+<div class="content-card">
+    <h1><i class="fas fa-edit"></i> Edit Claim</h1>
 
-                    <div class="mb-3">
-                        <label asp-for="Title" class="form-label"></label>
-                        <input asp-for="Title" class="form-control" />
-                        <span asp-validation-for="Title" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="Description" class="form-label"></label>
-                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
-                        <span asp-validation-for="Description" class="text-danger"></span>
-                    </div>
-                    <div class="mb-3">
-                        <label asp-for="RequestedAmount" class="form-label"></label>
-                        <div class="input-group">
-                            <span class="input-group-text">₹</span>
-                            <input asp-for="RequestedAmount" class="form-control" readonly/>
-                        </div>
-                        <span asp-validation-for="RequestedAmount" class="text-danger"></span>
-                    </div>
+    <div class="row">
+        <div class="col-md-9 col-lg-7">
+            <form asp-action="Edit" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="SubmittingUserId" />
 
-                    <hr />
-                    <h5 class="mt-4">Supporting Document</h5>
-                    @if (!string.IsNullOrEmpty(Model.SupportingDocumentPath))
-                    {
-                        <div class="mb-2">
-                            <span>Current file:</span>
-                            <a href="@Model.SupportingDocumentPath" target="_blank">View Current Document</a>
-                        </div>
-                        <div class="form-check mb-3">
-                            <input type="checkbox" name="removeExistingDocument" value="true" class="form-check-input" />
-                            <label class="form-check-label">Remove existing document</label>
-                        </div>
-                    }
-
-                    <div class="mb-3">
-                        <label class="form-label">Upload a new document (optional, will replace existing)</label>
-                        <input type="file" name="newSupportingDocument" class="form-control" />
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label fw-bold"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label fw-bold"></label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="RequestedAmount" class="form-label fw-bold"></label>
+                    <div class="input-group">
+                        <span class="input-group-text">₹</span>
+                        <input asp-for="RequestedAmount" class="form-control" readonly />
                     </div>
+                    <div class="form-text">The requested amount cannot be changed after submission.</div>
+                </div>
 
-
-                    <div class="mt-4">
-                        <input type="submit" value="Save Changes" class="btn btn-success" />
-                        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                <hr />
+                <h5 class="mt-4">Supporting Document</h5>
+                @if (!string.IsNullOrEmpty(Model.SupportingDocumentPath))
+                {
+                    <div class="mb-2">
+                        <span>Current file:</span>
+                        <a href="@Model.SupportingDocumentPath" target="_blank" class="view-document-link">View Current Document</a>
                     </div>
-                </form>
-            </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" name="removeExistingDocument" value="true" class="form-check-input" />
+                        <label class="form-check-label">Remove existing document</label>
+                    </div>
+                }
+                <div class="mb-3">
+                    <label class="form-label">Upload a new document (optional, will replace existing)</label>
+                    <input type="file" name="newSupportingDocument" class="form-control" />
+                </div>
+
+                <div class="mt-4">
+                    <input type="submit" value="Save Changes" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
