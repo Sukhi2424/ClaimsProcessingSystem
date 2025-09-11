@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ClaimsProcessingSystem.Helpers;
 
 namespace ClaimsProcessingSystem.Controllers
 {
@@ -27,30 +28,24 @@ namespace ClaimsProcessingSystem.Controllers
         }
 
         // GET: Claims
-        public async Task<IActionResult> Index(string statusFilter)
+        public async Task<IActionResult> Index(string statusFilter, int pageNumber = 1)
         {
             ViewData["CurrentFilter"] = statusFilter;
-
             var currentUserId = _userManager.GetUserId(User);
+
             var claimsQuery = _context.Claims
                                       .Where(c => c.SubmittingUserId == currentUserId)
                                       .AsQueryable();
 
-            // Filtering Logic
-            if (!String.IsNullOrEmpty(statusFilter))
+            if (!string.IsNullOrEmpty(statusFilter) && Enum.TryParse<ClaimStatus>(statusFilter, out var status))
             {
-                if (Enum.TryParse<ClaimStatus>(statusFilter, out var status))
-                {
-                    claimsQuery = claimsQuery.Where(c => c.Status == status);
-                }
+                claimsQuery = claimsQuery.Where(c => c.Status == status);
             }
 
-            var userClaims = await claimsQuery.OrderByDescending(c => c.DateSubmitted).ToListAsync();
+            int pageSize = 10;
+            var paginatedClaims = await PaginatedList<Claim>.CreateAsync(claimsQuery.OrderByDescending(c => c.DateSubmitted), pageNumber, pageSize);
 
-            // The badge count should reflect the filtered list for the user
-            ViewBag.PendingCount = userClaims.Count(c => c.Status == ClaimStatus.Pending);
-
-            return View(userClaims);
+            return View(paginatedClaims);
         }
 
         // GET: Claims/Details/5

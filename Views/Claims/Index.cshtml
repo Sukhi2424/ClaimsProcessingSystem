@@ -1,78 +1,100 @@
-﻿@model IEnumerable<ClaimsProcessingSystem.Models.Claim>
+﻿@model ClaimsProcessingSystem.Helpers.PaginatedList<ClaimsProcessingSystem.Models.Claim>
 
 @{
     ViewData["Title"] = "My Claims";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1>My Claims</h1>
-    <a asp-action="Create" class="btn btn-primary">Create New Claim</a>
-</div>
+<div class="content-card">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="mb-0"><i class="fas fa-file-invoice-dollar"></i> My Claims</h1>
+        <a asp-action="Create" class="btn btn-primary">Create New Claim</a>
+    </div>
+    <hr class="my-4" />
 
-<form asp-action="Index" method="get" class="mb-4">
-    <div class="row align-items-end">
-        <div class="col-md-3">
-            <label for="statusFilter" class="form-label">Filter by Status:</label>
+    <form asp-action="Index" method="get" class="mb-4 filter-form">
+        <div class="form-group">
+            <label for="statusFilter" class="form-label visually-hidden">Filter by Status:</label>
             @Html.DropDownList("statusFilter",
             new SelectList(Enum.GetValues(typeof(ClaimsProcessingSystem.Models.ClaimStatus))),
                         "All",
                         new { @class = "form-control" })
         </div>
-        <div class="col-md-2">
+        <div class="form-group">
             <input type="submit" value="Filter" class="btn btn-primary" />
         </div>
-    </div>
-</form>
-<div class="table-container">
-<table class="table table-hover">
-    <thead class="table-dark">
-        <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Requested Amount</th>
-            <th>Date Submitted</th>
-            <th>Status</th>
-            <th>Document</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var claim in Model)
-        {
-            <tr>
-                <td>@Html.DisplayFor(modelItem => claim.Title)</td>
-                <td>@Html.DisplayFor(modelItem => claim.Description)</td>
-                <td>@Html.DisplayFor(modelItem => claim.RequestedAmount)</td>
-                <td>@Html.DisplayFor(modelItem => claim.DateSubmitted)</td>
-                    @* Find the <td> for Status and replace its content with this *@
-                    <td>
-                        @{
-                            string badgeClass = claim.Status switch
+    </form>
+
+    <div class="table-container">
+        <table class="table table-hover table-sleek align-middle">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Requested Amount</th>
+                    <th>Date Submitted</th>
+                    <th>Status</th>
+                    <th>Document</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td title="@item.Title">@Html.DisplayFor(modelItem => item.Title)</td>
+                        <td title="@item.Description">@Html.DisplayFor(modelItem => item.Description)</td>
+                        <td>@item.RequestedAmount.ToString("C")</td>
+                        <td>@item.DateSubmitted.ToShortDateString()</td>
+                        <td>
+                            @{
+                                string badgeClass = item.Status switch
+                                {
+                                    ClaimStatus.Approved => "badge-status-approved",
+                                    ClaimStatus.Rejected => "badge-status-rejected",
+                                    _ => "badge-status-pending"
+                                };
+                            }
+                            <span class="badge-status @badgeClass">@item.Status</span>
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.SupportingDocumentPath))
                             {
-                                ClaimStatus.Approved => "badge-status-approved",
-                                ClaimStatus.Rejected => "badge-status-rejected",
-                                _ => "badge-status-pending"
-                            };
-                        }
-                        <span class="badge-status @badgeClass">@claim.Status</span>
-                    </td>
-                <td>
-                    @if (!string.IsNullOrEmpty(claim.SupportingDocumentPath))
-                    {
-                        <a href="@claim.SupportingDocumentPath" target="_blank" class="btn btn-outline-info btn-sm">View</a>
-                    }
-                    else
-                    {
-                        <span class="text-muted">N/A</span>
-                    }
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@claim.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@claim.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@claim.Id">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                                <a href="@item.SupportingDocumentPath" target="_blank" class="btn btn-outline-secondary btn-sm">View</a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">N/A</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group gap-2" role="group">
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-secondary btn-sm">Edit</a>
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Details</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <div class="pagination-container">
+            @{
+                var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)" asp-route-statusFilter="@ViewData["CurrentFilter"]" class="@prevDisabled">&laquo; Prev</a>
+
+                for (var i = 1; i <= Model.TotalPages; i++)
+                {
+                    var activeClass = (i == Model.PageIndex) ? "active-page" : "";
+                    <a asp-action="Index" asp-route-pageNumber="@i" asp-route-statusFilter="@ViewData["CurrentFilter"]" class="@activeClass">@i</a>
+                }
+
+                var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+                <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)" asp-route-statusFilter="@ViewData["CurrentFilter"]" class="@nextDisabled">Next &raquo;</a>
+            }
+        </div>
+    }
 </div>
