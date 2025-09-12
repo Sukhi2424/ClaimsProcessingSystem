@@ -22,10 +22,9 @@ namespace ClaimsProcessingSystem.ViewComponents
 
             // Fetch the top 5 latest "Added" actions from the audit log
             var notifications = await _context.AuditLogs
-                .Where(a => a.Action == "Added")
-                .OrderByDescending(a => a.Timestamp)
-                .Take(5)
-                .ToListAsync();
+    .Where(a => a.Action == "Added")
+    .OrderByDescending(a => a.Timestamp)
+    .ToListAsync();
 
             return View(notifications);
         }

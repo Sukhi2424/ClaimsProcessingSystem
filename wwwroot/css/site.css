@@ -441,6 +441,11 @@ body {
     border: 1px solid var(--border-color);
     box-shadow: 0 8px 25px rgba(0,0,0,.1);
     border-radius: var(--border-radius-main);
+    max-height: 350px; /* Add this: Sets a maximum height */
+    overflow-y: auto; /* Add this: Enables a scrollbar if content overflows */
+    border: 1px solid var(--border-color);
+    box-shadow: 0 8px 25px rgba(0,0,0,.1);
+    border-radius: var(--border-radius-main);
 }
 
     .notification-dropdown .dropdown-header {

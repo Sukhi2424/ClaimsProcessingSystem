@@ -48,5 +48,6 @@ namespace ClaimsProcessingSystem.Models
         // Navigation property to access the full User object
         [ForeignKey("SubmittingUserId")]
         public virtual ApplicationUser? SubmittingUser { get; set; }
+        public DateTime? DateProcessed { get; set; }
     }
 }

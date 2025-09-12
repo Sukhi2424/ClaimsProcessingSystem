@@ -80,6 +80,7 @@ namespace ClaimsProcessingSystem.Controllers
                 var approvedAmount = Math.Min(claim.RequestedAmount, maxReimbursement);
                 claim.ApprovedAmount = approvedAmount;
                 claim.Status = Models.ClaimStatus.Approved;
+                claim.DateProcessed = DateTime.UtcNow; 
                 await _context.SaveChangesAsync();
 
                 var subject = $"Your Claim '{claim.Title}' has been Approved";
@@ -103,6 +104,7 @@ namespace ClaimsProcessingSystem.Controllers
 
                 var subject = $"Update on Your Claim '{claim.Title}'";
                 var message = $"Dear {claim.SubmittingUser.FullName},<br><br>We regret to inform you that your claim for {claim.RequestedAmount.ToString("C", new CultureInfo("en-IN"))} has been rejected.<br><br>Thank you,<br>ClaimsPro System";
+                claim.DateProcessed = DateTime.UtcNow; 
                 await _emailSender.SendEmailAsync(claim.SubmittingUser.Email, subject, message);
 
                 TempData["warning"] = "Claim rejected and notification sent.";
