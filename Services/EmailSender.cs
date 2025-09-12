@@ -2,10 +2,12 @@
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.Threading.Tasks;
+using System.IO;
+using System.Text.Json;
 
 namespace ClaimsProcessingSystem.Services
 {
-    public class EmailSender
+    public class EmailSender 
     {
         private readonly IConfiguration _configuration;
 
@@ -16,16 +18,43 @@ namespace ClaimsProcessingSystem.Services
 
         public async Task SendEmailAsync(string toEmail, string subject, string message)
         {
-            var apiKey = _configuration["SendGridKey"];
+            string apiKey = null;
 
-            // This new check will tell us if the key is missing.
+            // --- MANUAL FILE READING WORKAROUND ---
+            try
+            {
+                // Get the absolute path to the running application's directory
+                var basePath = AppContext.BaseDirectory;
+                var appSettingsPath = Path.Combine(basePath, "appsettings.Development.json");
+
+                if (File.Exists(appSettingsPath))
+                {
+                    var jsonText = await File.ReadAllTextAsync(appSettingsPath);
+                    using (var doc = JsonDocument.Parse(jsonText))
+                    {
+                        if (doc.RootElement.TryGetProperty("SendGridKey", out var keyElement))
+                        {
+                            apiKey = keyElement.GetString();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // This will write any file reading errors to the debug console
+                System.Diagnostics.Debug.WriteLine($"Error manually reading secrets: {ex.Message}");
+            }
+            // --- END OF WORKAROUND ---
+
+
             if (string.IsNullOrEmpty(apiKey))
             {
-                throw new Exception("The 'SendGridKey' was not found in the configuration. Please make sure it is set correctly in your user secrets.");
+                // If it's still null, the file is unreadable or the key is missing from the file
+                throw new Exception("SendGridKey is still null. Check appsettings.Development.json and its properties.");
             }
 
             var client = new SendGridClient(apiKey);
-            var from = new EmailAddress("no-reply@claimspro.com", "ClaimsPro System");
+            var from = new EmailAddress("sukhi.m2409@gmail.com", "ClaimsPro System");
             var to = new EmailAddress(toEmail);
             var plainTextContent = message;
             var htmlContent = $"<p>{message}</p>";

@@ -14,6 +14,11 @@ namespace ClaimsProcessingSystem
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            // Add this block to explicitly load user secrets in Development
+            if (builder.Environment.IsDevelopment())
+            {
+                builder.Configuration.AddUserSecrets<Program>();
+            }
 
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");

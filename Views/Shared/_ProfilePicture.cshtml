@@ -5,14 +5,24 @@
 {
     @if (!string.IsNullOrEmpty(Model.ProfilePicturePath))
     {
-        <img src="@Model.ProfilePicturePath" class="rounded-circle" style="width:40px; height:40px; object-fit: cover;" />
+        <img src="@Model.ProfilePicturePath" class="rounded-circle" style="width:40px; height:40px; object-fit: cover;" alt="Profile Picture" />
     }
     else
     {
-        var nameParts = Model.FullName?.Split(' ');
-        var initials = nameParts?.Length > 1
-            ? $"{nameParts[0][0]}{nameParts[nameParts.Length - 1][0]}"
-            : (Model.FullName?.Length > 0 ? $"{Model.FullName[0]}" : "?");
+        // This new logic is safer and handles empty or single names correctly.
+        var initials = "?";
+        if (!string.IsNullOrWhiteSpace(Model.FullName))
+        {
+            var nameParts = Model.FullName.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (nameParts.Length > 1)
+            {
+                initials = $"{nameParts[0][0]}{nameParts[nameParts.Length - 1][0]}";
+            }
+            else if (nameParts.Length == 1 && nameParts[0].Length > 0)
+            {
+                initials = $"{nameParts[0][0]}";
+            }
+        }
 
         <div class="profile-initials" title="@Model.FullName">
             @initials.ToUpper()

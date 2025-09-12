@@ -84,7 +84,7 @@ namespace ClaimsProcessingSystem.Controllers
 
                 var subject = $"Your Claim '{claim.Title}' has been Approved";
                 var message = $"Dear {claim.SubmittingUser.FullName},<br><br>Your claim for {claim.RequestedAmount.ToString("C", new CultureInfo("en-IN"))} has been approved for the amount of {claim.ApprovedAmount?.ToString("C", new CultureInfo("en-IN"))}.<br><br>Thank you,<br>ClaimsPro System";
-                await _emailSender.SendEmailAsync(claim.SubmittingUser.Email, subject, message);
+                _= _emailSender.SendEmailAsync(claim.SubmittingUser.Email, subject, message);
 
                 TempData["success"] = "Claim approved and notification sent.";
             }
