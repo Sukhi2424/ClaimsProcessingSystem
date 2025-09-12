@@ -23,11 +23,19 @@ namespace ClaimsProcessingSystem.Controllers
         }
 
         // GET: Users
-        public async Task<IActionResult> Index(int pageNumber = 1)
+        public async Task<IActionResult> Index(int pageNumber = 1, string searchString = null)
         {
+            ViewData["CurrentSearch"] = searchString;
+            var usersQuery = _userManager.Users.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                usersQuery = usersQuery.Where(u => u.FullName.Contains(searchString)
+                                                || u.Email.Contains(searchString));
+            }
+
             int pageSize = 10;
-            var usersQuery = _userManager.Users.OrderBy(u => u.FullName);
-            var paginatedUsers = await PaginatedList<ApplicationUser>.CreateAsync(usersQuery, pageNumber, pageSize);
+            var paginatedUsers = await PaginatedList<ApplicationUser>.CreateAsync(usersQuery.OrderBy(u => u.FullName), pageNumber, pageSize);
             return View(paginatedUsers);
         }
         // GET: Users/Edit/5

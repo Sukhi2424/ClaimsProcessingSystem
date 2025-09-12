@@ -1,5 +1,6 @@
 ﻿@using ClaimsProcessingSystem.Models.Identity
-@model ClaimsProcessingSystem.Helpers.PaginatedList<ClaimsProcessingSystem.Models.Identity.ApplicationUser>
+@using ClaimsProcessingSystem.Helpers
+@model PaginatedList<ApplicationUser>
 
 @{
     ViewData["Title"] = "User Management";
@@ -8,8 +9,19 @@
 <div class="content-card">
     <h1 class="mb-4"><i class="fas fa-users-cog"></i> User Management</h1>
 
+    <form asp-action="Index" method="get" class="mb-4">
+        <div class="row">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <input type="text" name="searchString" value="@ViewData["CurrentSearch"]" class="form-control" placeholder="Search by Name or Email..." />
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
     <div class="table-container">
-        <table class="table table-hover align-middle">
+        <table class="table table-hover table-striped align-middle">
             <thead>
                 <tr>
                     <th>Profile</th>
@@ -26,12 +38,12 @@
                         <td>
                             <partial name="_ProfilePicture" model="user" />
                         </td>
-                        <td>@Html.DisplayFor(modelItem => user.FullName)</td>
+                        <td title="@user.FullName">@Html.DisplayFor(modelItem => user.FullName)</td>
                         <td>@Html.DisplayFor(modelItem => user.EmployeeNo)</td>
-                        <td>@Html.DisplayFor(modelItem => user.Email)</td>
+                        <td title="@user.Email">@Html.DisplayFor(modelItem => user.Email)</td>
                         <td class="text-end">
                             <div class="btn-group gap-2" role="group">
-                                <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-primary btn-sm">Edit</a>
+                                <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-secondary btn-sm">Edit</a>
                                 <a asp-action="Delete" asp-route-id="@user.Id" class="btn btn-danger btn-sm">Delete</a>
                             </div>
                         </td>
@@ -40,22 +52,23 @@
             </tbody>
         </table>
     </div>
-</div>
-@if (Model.TotalPages > 1)
-{
-    <div class="pagination-container">
-        @{
-            var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
-            <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)" class="@prevDisabled">&laquo; Prev</a>
 
-            for (var i = 1; i <= Model.TotalPages; i++)
-            {
-                var activeClass = (i == Model.PageIndex) ? "active-page" : "";
-                <a asp-action="Index" asp-route-pageNumber="@i" class="@activeClass">@i</a>
+    @if (Model.TotalPages > 1)
+    {
+        <div class="pagination-container">
+            @{
+                var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)" asp-route-searchString="@ViewData["CurrentSearch"]" class="@prevDisabled">&laquo; Prev</a>
+
+                for (var i = 1; i <= Model.TotalPages; i++)
+                {
+                    var activeClass = (i == Model.PageIndex) ? "active-page" : "";
+                    <a asp-action="Index" asp-route-pageNumber="@i" asp-route-searchString="@ViewData["CurrentSearch"]" class="@activeClass">@i</a>
+                }
+
+                var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+                <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)" asp-route-searchString="@ViewData["CurrentSearch"]" class="@nextDisabled">Next &raquo;</a>
             }
-
-            var nextDisabled = !Model.HasNextPage ? "disabled" : "";
-            <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)" class="@nextDisabled">Next &raquo;</a>
-        }
-    </div>
-}
+        </div>
+    }
+</div>

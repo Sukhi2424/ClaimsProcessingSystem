@@ -25,40 +25,29 @@ namespace ClaimsProcessingSystem.Controllers
         }
 
         // GET: Admin or Admin/Index
-        public async Task<IActionResult> Index(string sortOrder, string statusFilter, int pageNumber = 1)
+        public async Task<IActionResult> Index(string sortOrder, string statusFilter, int pageNumber = 1, string searchString = null)
         {
             ViewData["CurrentSort"] = sortOrder;
-            ViewData["AmountSortParm"] = String.IsNullOrEmpty(sortOrder) ? "amount_desc" : "";
-            ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
             ViewData["CurrentFilter"] = statusFilter;
+            ViewData["CurrentSearch"] = searchString; // Pass search string back to view
 
             var claimsQuery = _context.Claims.Include(c => c.SubmittingUser).AsQueryable();
 
-            // Filtering Logic...
-            if (!String.IsNullOrEmpty(statusFilter))
+            // Search Logic
+            if (!string.IsNullOrEmpty(searchString))
             {
-                if (Enum.TryParse<ClaimStatus>(statusFilter, out var status))
-                {
-                    claimsQuery = claimsQuery.Where(c => c.Status == status);
-                }
+                claimsQuery = claimsQuery.Where(c => c.Title.Contains(searchString)
+                                                  || c.SubmittingUser.FullName.Contains(searchString));
+            }
+
+            // Filtering Logic
+            if (!string.IsNullOrEmpty(statusFilter) && Enum.TryParse<ClaimStatus>(statusFilter, out var status))
+            {
+                claimsQuery = claimsQuery.Where(c => c.Status == status);
             }
 
             // Sorting Logic...
-            switch (sortOrder)
-            {
-                case "amount_desc":
-                    claimsQuery = claimsQuery.OrderByDescending(c => c.RequestedAmount);
-                    break;
-                case "Date":
-                    claimsQuery = claimsQuery.OrderBy(c => c.DateSubmitted);
-                    break;
-                case "date_desc":
-                    claimsQuery = claimsQuery.OrderByDescending(c => c.DateSubmitted);
-                    break;
-                default:
-                    claimsQuery = claimsQuery.OrderBy(c => c.DateSubmitted).Reverse(); // Default sort by most recent
-                    break;
-            }
+            claimsQuery = claimsQuery.OrderByDescending(c => c.DateSubmitted);
 
             int pageSize = 10;
             var paginatedClaims = await PaginatedList<Claim>.CreateAsync(claimsQuery, pageNumber, pageSize);
