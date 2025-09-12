@@ -7,7 +7,7 @@
 <ul class="navbar-nav align-items-center">
     @if (SignInManager.IsSignedIn(User))
     {
-        // Check the user's role to show the correct notification bell
+        // Check if the user is a manager to show the bell icon
         @if (User.IsInRole("Manager"))
         {
             <li class="nav-item dropdown">
@@ -38,7 +38,9 @@
         </li>
         <li class="nav-item">
             <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                <button type="submit" class="nav-link btn btn-link text-light">Logout</button>
+                <button type="submit" class="btn btn-danger btn-sm d-flex align-items-center">
+                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                </button>
             </form>
         </li>
     }

@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-    <meta charset="utf-g" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - WCPS</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -28,6 +28,7 @@
                     <ul class="navbar-nav flex-grow-1">
                         @{
                             var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+                            var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
                         }
                         <li class="nav-item">
                             <a class="nav-link @(currentController == "Home" ? "active" : "")" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
@@ -38,10 +39,13 @@
                             @if (User.IsInRole("Manager"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link @(currentController == "Admin" ? "active" : "")" asp-area="" asp-controller="Admin" asp-action="Index">Admin Claims</a>
+                                    <a class="nav-link @(currentController == "Admin" && currentAction == "Index" ? "active" : "")" asp-area="" asp-controller="Admin" asp-action="Index">Admin Claims</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link @(currentController == "Users" ? "active" : "")" asp-area="" asp-controller="Users" asp-action="Index">Manage Users</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link @(currentController == "Admin" && currentAction == "Reports" ? "active" : "")" asp-area="" asp-controller="Admin" asp-action="Reports">Reports</a>
                                 </li>
                             }
                             <li class="nav-item">

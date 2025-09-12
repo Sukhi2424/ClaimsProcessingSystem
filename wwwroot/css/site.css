@@ -10,7 +10,8 @@
     --surface-color: #ffffff;
     --text-color: #212529;
     --border-color: #eaeaea;
-    --border-radius-main: 14px; /* Softer corners */
+    --border-radius-main: 14px;
+    --body-background: linear-gradient(to bottom, #f8f9fa, #ffffff); /* NEW: Gradient background */
 }
 
 [data-theme="dark"] {
@@ -22,7 +23,8 @@
 
 body {
     font-family: var(--font-family);
-    background-color: var(--bg-color);
+    background: var(--body-background);
+    background-attachment: fixed; /* Keeps gradient smooth on scroll */
     color: var(--text-color);
 }
 
@@ -633,3 +635,68 @@ body {
     width: 100%;
     height: auto;
 }
+/* === Final Employee Dashboard Refinements === */
+#employee-dashboard-page .stat-card {
+    background-color: var(--surface-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+    text-align: center;
+    padding: 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+    #employee-dashboard-page .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    #employee-dashboard-page .stat-card .card-icon {
+        font-size: 2.5rem;
+        color: var(--primary-blue);
+    }
+
+    #employee-dashboard-page .stat-card .card-label {
+        color: #6b7280;
+        font-size: 0.9rem;
+        margin-top: 1rem;
+        text-transform: uppercase;
+    }
+
+    #employee-dashboard-page .stat-card .stat-number {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0.5rem 0;
+    }
+
+    #employee-dashboard-page .stat-card .card-button {
+        text-decoration: none;
+        color: var(--primary-blue);
+        border: 1px solid var(--primary-blue);
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        display: block;
+        width: 100%;
+        margin-top: auto;
+    }
+
+        #employee-dashboard-page .stat-card .card-button:hover {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+
+[data-theme="dark"] #employee-dashboard-page .stat-card {
+    border-color: var(--border-color);
+}
+
+    [data-theme="dark"] #employee-dashboard-page .stat-card .stat-number {
+        color: var(--text-color);
+    }
+
+    [data-theme="dark"] #employee-dashboard-page .stat-card .card-label {
+        color: var(--text-muted-color);
+    }
+

@@ -6,8 +6,8 @@
 
 @if (Model != null)
 {
-    // This part shows for LOGGED-IN EMPLOYEES
-    <div class="dashboard-center-container">
+    <div id="employee-dashboard-page">
+        @* Add this ID to scope the styles *@
         <div class="dashboard-header text-center">
             <h1>Welcome back, @Model.FullName!</h1>
             <p class="text-muted">Here is a summary of your claims activity.</p>

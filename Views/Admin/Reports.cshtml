@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Claims Report";
+}
+
+<div class="content-card">
+    <h1><i class="fas fa-chart-pie"></i> Claims Status Report</h1>
+    <p class="text-muted">A summary of all claims processed in the system.</p>
+
+    <div style="width: 100%; max-width: 600px; margin: 2rem auto;">
+        <canvas id="claimsPieChart"></canvas>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const ctx = document.getElementById('claimsPieChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: [
+                        'Approved',
+                        'Rejected',
+                        'Pending'
+                    ],
+                    datasets: [{
+                        label: 'Claims by Status',
+                        // These values are passed directly from our C# controller
+                        data: [
+                            @ViewBag.ApprovedCount,
+                            @ViewBag.RejectedCount,
+                            @ViewBag.PendingCount
+                        ],
+                        backgroundColor: [
+                            'rgba(22, 163, 74, 0.7)',  // Green for Approved
+                            'rgba(220, 38, 38, 0.7)',  // Red for Rejected
+                            'rgba(245, 158, 11, 0.7)'  // Yellow for Pending
+                        ],
+                        borderColor: [
+                            'rgba(22, 163, 74, 1)',
+                            'rgba(220, 38, 38, 1)',
+                            'rgba(245, 158, 11, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Overall Claim Status Distribution'
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}

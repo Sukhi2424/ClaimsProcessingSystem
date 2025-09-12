@@ -119,5 +119,14 @@ namespace ClaimsProcessingSystem.Controllers
                                         .ToListAsync();
             return View(allLogs);
         }
+        // GET: Admin/Reports
+        public async Task<IActionResult> Reports()
+        {
+            ViewBag.ApprovedCount = await _context.Claims.CountAsync(c => c.Status == ClaimStatus.Approved);
+            ViewBag.RejectedCount = await _context.Claims.CountAsync(c => c.Status == ClaimStatus.Rejected);
+            ViewBag.PendingCount = await _context.Claims.CountAsync(c => c.Status == ClaimStatus.Pending);
+
+            return View();
+        }
     }
 }
