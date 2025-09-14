@@ -44,16 +44,19 @@ namespace ClaimsProcessingSystem
             });
             // --- END OF CULTURE SETTINGS ---
             // This section is new
+            // --- Seeding the database ---
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
+                var logger = services.GetRequiredService<ILogger<Program>>();
                 try
                 {
-                    await ClaimsProcessingSystem.Services.DbInitializer.Initialize(services);
+                    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                    await DbInitializer.Initialize(userManager, roleManager);
                 }
                 catch (Exception ex)
                 {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
                     logger.LogError(ex, "An error occurred while seeding the database.");
                 }
             }

@@ -1,22 +1,19 @@
 ﻿using ClaimsProcessingSystem.Data;
+using ClaimsProcessingSystem.Models.Identity;
 using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace ClaimsProcessingSystem.Services
 {
     public static class DbInitializer
     {
-        public static async Task Initialize(IServiceProvider serviceProvider)
+        public static async Task Initialize(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
-            var logger = serviceProvider.GetRequiredService<ILogger<Program>>(); // Add logger
-
             // Add roles if they don't exist
             string[] roleNames = { "Manager", "Employee" };
             foreach (var roleName in roleNames)
             {
-                var roleExist = await roleManager.RoleExistsAsync(roleName);
-                if (!roleExist)
+                if (!await roleManager.RoleExistsAsync(roleName))
                 {
                     await roleManager.CreateAsync(new IdentityRole(roleName));
                 }
@@ -24,34 +21,21 @@ namespace ClaimsProcessingSystem.Services
 
             // Create a default admin user if one doesn't exist
             var adminEmail = "admin@test.com";
-            var adminUser = await userManager.FindByEmailAsync(adminEmail);
-
-            if (adminUser == null)
+            if (await userManager.FindByEmailAsync(adminEmail) == null)
             {
-                var newAdminUser = new IdentityUser()
+                var adminUser = new ApplicationUser
                 {
                     UserName = adminEmail,
                     Email = adminEmail,
                     EmailConfirmed = true,
+                    FullName = "Admin User",
+                    EmployeeNo = "ADMIN001"
                 };
 
-                var result = await userManager.CreateAsync(newAdminUser, "Password123!");
-
+                var result = await userManager.CreateAsync(adminUser, "Password123!");
                 if (result.Succeeded)
                 {
-                    // Assign both roles to the new user
-                    await userManager.AddToRoleAsync(newAdminUser, "Manager");
-                    await userManager.AddToRoleAsync(newAdminUser, "Employee"); // <-- ADD THIS LINE
-                }
-                else
-                {
-                    // --- THIS IS THE NEW PART ---
-                    // If creation fails, log each error
-                    foreach (var error in result.Errors)
-                    {
-                        logger.LogError($"Error creating admin user: {error.Description}");
-                    }
-                    // --------------------------
+                    await userManager.AddToRoleAsync(adminUser, "Manager");
                 }
             }
         }
