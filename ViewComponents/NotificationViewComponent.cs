@@ -20,11 +20,13 @@ namespace ClaimsProcessingSystem.ViewComponents
         {
             var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // Fetch the top 5 latest "Added" actions from the audit log
+            // This new query ONLY fetches 'Added' events for 'Claims' and 'AspNetUsers'.
+            // This guarantees the 'Id' will be present and prevents the crash.
             var notifications = await _context.AuditLogs
-    .Where(a => a.Action == "Added")
-    .OrderByDescending(a => a.Timestamp)
-    .ToListAsync();
+                .Where(a => a.Action == "Added" && (a.TableName == "Claims" || a.TableName == "AspNetUsers"))
+                .OrderByDescending(a => a.Timestamp)
+                .Take(5)
+                .ToListAsync();
 
             return View(notifications);
         }

@@ -29,7 +29,7 @@ namespace ClaimsProcessingSystem.Controllers
         {
             ViewData["CurrentSort"] = sortOrder;
             ViewData["CurrentFilter"] = statusFilter;
-            ViewData["CurrentSearch"] = searchString; // Pass search string back to view
+            ViewData["CurrentSearch"] = searchString;
 
             var claimsQuery = _context.Claims.Include(c => c.SubmittingUser).AsQueryable();
 
@@ -83,22 +83,22 @@ namespace ClaimsProcessingSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RejectClaim(int id)
+        public async Task<IActionResult> RejectClaim(int id, string searchString = null)
         {
             var claim = await _context.Claims.Include(c => c.SubmittingUser).FirstOrDefaultAsync(c => c.Id == id);
             if (claim != null)
             {
                 claim.Status = Models.ClaimStatus.Rejected;
+                claim.DateProcessed = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
 
                 var subject = $"Update on Your Claim '{claim.Title}'";
                 var message = $"Dear {claim.SubmittingUser.FullName},<br><br>We regret to inform you that your claim for {claim.RequestedAmount.ToString("C", new CultureInfo("en-IN"))} has been rejected.<br><br>Thank you,<br>ClaimsPro System";
-                claim.DateProcessed = DateTime.UtcNow; 
-                await _emailSender.SendEmailAsync(claim.SubmittingUser.Email, subject, message);
+                _ = _emailSender.SendEmailAsync(claim.SubmittingUser.Email, subject, message);
 
                 TempData["warning"] = "Claim rejected and notification sent.";
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { searchString = searchString });
         }
         // GET: Admin/AllActivity
         public async Task<IActionResult> AllActivity()

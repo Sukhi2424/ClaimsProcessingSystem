@@ -10,27 +10,25 @@
         <span class="badge-status badge-status-pending">@ViewBag.PendingCount Pending</span>
     </div>
 
-    <form asp-action="Index" method="get" class="my-4">
-        <div class="row align-items-end g-2">
-            <div class="col-md-4">
-                <label for="searchString" class="form-label">Search by Title or User:</label>
-                <input type="text" name="searchString" value="@ViewData["CurrentSearch"]" class="form-control" />
-            </div>
-            <div class="col-md-3">
-                <label for="statusFilter" class="form-label">Filter by Status:</label>
-                @Html.DropDownList("statusFilter",
-                new SelectList(Enum.GetValues(typeof(ClaimsProcessingSystem.Models.ClaimStatus))),
-                                "All",
-                                new { @class = "form-control" })
-            </div>
-            <div class="col-md-2">
-                <input type="submit" value="Search" class="btn btn-primary w-100" />
-            </div>
+    <form asp-action="Index" method="get" class="my-4 filter-form">
+        <div class="form-group">
+            <label for="searchString" class="form-label visually-hidden">Search:</label>
+            <input type="text" name="searchString" value="@ViewData["CurrentSearch"]" class="form-control" placeholder="Search by Title or User..." />
+        </div>
+        <div class="form-group">
+            <label for="statusFilter" class="form-label visually-hidden">Filter by Status:</label>
+            @Html.DropDownList("statusFilter",
+            new SelectList(Enum.GetValues(typeof(ClaimsProcessingSystem.Models.ClaimStatus))),
+                        "All",
+                        new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Filter" class="btn btn-primary" />
         </div>
     </form>
 
-    <div class="table-responsive">
-        <table class="table table-hover align-middle">
+    <div class="table-container">
+        <table class="table table-hover table-striped table-sleek align-middle">
             <thead>
                 <tr>
                     <th>Submitted By</th>
@@ -47,8 +45,8 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@Html.DisplayFor(modelItem => item.SubmittingUser.FullName)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                        <td>@(item.SubmittingUser?.FullName ?? "User Not Found")</td>
+                        <td title="@item.Title">@Html.DisplayFor(modelItem => item.Title)</td>
                         <td>@item.RequestedAmount.ToString("C")</td>
                         <td>@(item.ApprovedAmount?.ToString("C") ?? "N/A")</td>
                         <td>@item.DateSubmitted.ToShortDateString()</td>
@@ -77,10 +75,10 @@
                             @if (item.Status == ClaimStatus.Pending)
                             {
                                 <div class="btn-group gap-2">
-                                    <form asp-action="ApproveClaim" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                    <form asp-action="ApproveClaim" asp-route-id="@item.Id" method="post">
                                         <button type="submit" class="btn-action btn-action-approve"><i class="fas fa-check"></i> Approve</button>
                                     </form>
-                                    <form asp-action="RejectClaim" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                    <form asp-action="RejectClaim" asp-route-id="@item.Id" method="post">
                                         <button type="submit" class="btn-action btn-action-reject"><i class="fas fa-times"></i> Reject</button>
                                     </form>
                                 </div>
@@ -101,16 +99,16 @@
         <div class="pagination-container">
             @{
                 var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
-                <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)" asp-route-statusFilter="@ViewData["CurrentFilter"]" class="@prevDisabled">&laquo; Prev</a>
+                <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex - 1)" asp-route-statusFilter="@ViewData["CurrentFilter"]" asp-route-searchString="@ViewData["CurrentSearch"]" class="@prevDisabled">&laquo; Prev</a>
 
                 for (var i = 1; i <= Model.TotalPages; i++)
                 {
                     var activeClass = (i == Model.PageIndex) ? "active-page" : "";
-                    <a asp-action="Index" asp-route-pageNumber="@i" asp-route-statusFilter="@ViewData["CurrentFilter"]" class="@activeClass">@i</a>
+                    <a asp-action="Index" asp-route-pageNumber="@i" asp-route-statusFilter="@ViewData["CurrentFilter"]" asp-route-searchString="@ViewData["CurrentSearch"]" class="@activeClass">@i</a>
                 }
 
                 var nextDisabled = !Model.HasNextPage ? "disabled" : "";
-                <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)" asp-route-statusFilter="@ViewData["CurrentFilter"]" class="@nextDisabled">Next &raquo;</a>
+                <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex + 1)" asp-route-statusFilter="@ViewData["CurrentFilter"]" asp-route-searchString="@ViewData["CurrentSearch"]" class="@nextDisabled">Next &raquo;</a>
             }
         </div>
     }

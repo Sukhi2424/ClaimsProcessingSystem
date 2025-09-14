@@ -1,6 +1,7 @@
 ﻿@using ClaimsProcessingSystem.Models.Identity
 @model ApplicationUser
 
+@* This first line checks if the user object (Model) exists before trying to use it *@
 @if (Model != null)
 {
     @if (!string.IsNullOrEmpty(Model.ProfilePicturePath))

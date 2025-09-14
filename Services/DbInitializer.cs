@@ -39,9 +39,9 @@ namespace ClaimsProcessingSystem.Services
 
                 if (result.Succeeded)
                 {
-                    // Assign the "Manager" role to the new user
+                    // Assign both roles to the new user
                     await userManager.AddToRoleAsync(newAdminUser, "Manager");
-                    logger.LogInformation("Admin user created successfully."); // Success message
+                    await userManager.AddToRoleAsync(newAdminUser, "Employee"); // <-- ADD THIS LINE
                 }
                 else
                 {

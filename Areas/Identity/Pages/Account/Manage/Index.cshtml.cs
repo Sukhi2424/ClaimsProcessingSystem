@@ -4,9 +4,10 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
+using System.IO;
 using System.Threading.Tasks;
 using ClaimsProcessingSystem.Models.Identity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -21,49 +22,37 @@ namespace ClaimsProcessingSystem.Areas.Identity.Pages.Account.Manage
         public IndexModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager)
-
         {
             _userManager = userManager;
             _signInManager = signInManager;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public string CurrentUserProfilePicture { get; set; }
         public string Username { get; set; }
+        public string CurrentUserProfilePicture { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [Display(Name = "Last Login")]
         public DateTime? LastLoginTime { get; set; }
+
         [TempData]
         public string StatusMessage { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         [BindProperty]
         public InputModel Input { get; set; }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
+            [Required]
+            [Display(Name = "Full Name")]
+            public string FullName { get; set; }
+
+            [Display(Name = "Employee Number")]
+            public string EmployeeNo { get; set; }
+
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
-            public IFormFile? ProfilePicture { get; set; }
+
+            public IFormFile ProfilePicture { get; set; }
         }
 
         private async Task LoadAsync(ApplicationUser user)
@@ -71,12 +60,14 @@ namespace ClaimsProcessingSystem.Areas.Identity.Pages.Account.Manage
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
-            CurrentUserProfilePicture = user.ProfilePicturePath;
             Username = userName;
+            CurrentUserProfilePicture = user.ProfilePicturePath;
             LastLoginTime = user.LastLoginTime;
 
             Input = new InputModel
             {
+                FullName = user.FullName,
+                EmployeeNo = user.EmployeeNo,
                 PhoneNumber = phoneNumber
             };
         }
@@ -107,23 +98,28 @@ namespace ClaimsProcessingSystem.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
-            // --- PROFILE PICTURE UPLOAD LOGIC ---
+            // Update Full Name if it has changed
+            if (Input.FullName != user.FullName)
+            {
+                user.FullName = Input.FullName;
+            }
+
+            // Profile Picture Upload Logic
             if (Input.ProfilePicture != null && Input.ProfilePicture.Length > 0)
             {
+                // (You can add logic here to delete the old picture if it exists)
                 var uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(Input.ProfilePicture.FileName);
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/profile-pictures");
                 var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
                 Directory.CreateDirectory(uploadsFolder);
-
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
                     await Input.ProfilePicture.CopyToAsync(fileStream);
                 }
                 user.ProfilePicturePath = "/profile-pictures/" + uniqueFileName;
             }
-            // --- END OF LOGIC ---
 
+            // Update Phone Number if it has changed
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
             if (Input.PhoneNumber != phoneNumber)
             {
