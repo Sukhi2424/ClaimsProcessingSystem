@@ -3,6 +3,8 @@
 A full-stack web application built with ASP.NET Core MVC, designed to digitize and streamline the employee expense reimbursement process. This project replaces a manual, paper-based system with a secure, efficient, and user-friendly web portal.
 
 ![All Claims Page Screenshot]<img width="3830" height="2165" alt="image" src="https://github.com/user-attachments/assets/9c6cfed1-566a-45ac-a43a-1c19e7944982" />
+<img width="1918" height="936" alt="image" src="https://github.com/user-attachments/assets/bee65e92-2157-4a39-bb5f-b6ecd6e64dbb" />
+
 
 ---
 
